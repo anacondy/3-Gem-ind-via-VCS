@@ -155,8 +155,8 @@
             }
         }
         
-        /* Support for 20:9 aspect ratio phones */
-        @media only screen and (max-width: 768px) and (min-aspect-ratio: 9/20) {
+        /* Support for 20:9 aspect ratio phones (taller screens) */
+        @media only screen and (max-width: 768px) and (min-aspect-ratio: 20/9) {
             .info-sidebar {
                 height: 45vh;
             }
@@ -189,6 +189,7 @@
 
         /* --- 3. HOVER TOOLTIP STYLING --- */
         /* Fixed: Remove the square box when typing state/location */
+        /* Note: !important is necessary to override Leaflet's default tooltip styles */
         .leaflet-tooltip.glass-tooltip {
             background: rgba(0, 0, 0, 0.85) !important;
             backdrop-filter: blur(10px);
@@ -309,8 +310,12 @@
         };
 
         // --- 3. GEMINI API INTEGRATION ---
-        // Note: For production, store API key securely (environment variables, backend proxy)
-        // Users should add their own Gemini API key
+        // IMPORTANT SECURITY NOTE: In production, API keys should NEVER be stored in client-side code
+        // For production deployment:
+        // 1. Move API key to environment variables
+        // 2. Create a backend proxy endpoint to handle API calls
+        // 3. Implement rate limiting and authentication
+        // This implementation is for demonstration/personal use only
         const GEMINI_API_KEY = 'YOUR_GEMINI_API_KEY_HERE'; // Replace with actual key
         const GEMINI_API_URL = 'https://generativelanguage.googleapis.com/v1beta/models/gemini-pro:generateContent';
         
@@ -382,7 +387,21 @@ Provide ONLY valid JSON in your response, no additional text or explanations.`;
                 }
 
                 const data = await response.json();
+                
+                // Validate API response structure
+                if (!data || !data.candidates || !Array.isArray(data.candidates) || data.candidates.length === 0) {
+                    throw new Error('Invalid API response structure');
+                }
+                
+                if (!data.candidates[0].content || !data.candidates[0].content.parts || !data.candidates[0].content.parts[0]) {
+                    throw new Error('Missing content in API response');
+                }
+                
                 const apiResponse = data.candidates[0].content.parts[0].text;
+                
+                if (!apiResponse || typeof apiResponse !== 'string') {
+                    throw new Error('Invalid response text');
+                }
                 
                 // Extract JSON from response (handle markdown code blocks)
                 let jsonText = apiResponse;
