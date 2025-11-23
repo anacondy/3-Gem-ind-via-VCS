@@ -24,6 +24,18 @@
             background: #050505;
         }
 
+        /* Mobile optimizations for better rendering */
+        @media only screen and (max-width: 768px) {
+            body, html {
+                -webkit-font-smoothing: antialiased;
+                -moz-osx-font-smoothing: grayscale;
+            }
+            #map {
+                height: 100vh;
+                height: 100dvh; /* Dynamic viewport height for mobile browsers */
+            }
+        }
+
         /* --- 2. GLASSMORPHISM UI --- */
         .glass-header {
             position: absolute;
@@ -39,11 +51,66 @@
             border-radius: 16px;
             box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.5);
             color: white;
-            pointer-events: none;
+            pointer-events: auto;
         }
 
         .glass-header h1 { margin: 0; font-size: 24px; font-weight: 800; color: #ffffff; letter-spacing: -0.5px; }
         .glass-header p { margin: 5px 0 0 0; font-size: 13px; color: #888; }
+        
+        /* API Controls */
+        .api-controls {
+            margin-top: 15px;
+            padding-top: 15px;
+            border-top: 1px solid rgba(255, 255, 255, 0.1);
+        }
+        
+        .refresh-btn {
+            width: 100%;
+            padding: 10px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            border: none;
+            border-radius: 8px;
+            color: white;
+            font-weight: 600;
+            font-size: 13px;
+            cursor: pointer;
+            transition: transform 0.2s, box-shadow 0.2s;
+            pointer-events: auto;
+        }
+        
+        .refresh-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(102, 126, 234, 0.4);
+        }
+        
+        .refresh-btn:active {
+            transform: translateY(0);
+        }
+        
+        .refresh-btn:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+        
+        .api-status {
+            margin-top: 10px;
+            font-size: 11px;
+            color: #888;
+            text-align: center;
+        }
+        
+        /* Mobile adjustments for header */
+        @media only screen and (max-width: 768px) {
+            .glass-header {
+                top: 10px;
+                left: 10px;
+                right: 10px;
+                width: auto;
+                padding: 15px;
+            }
+            .glass-header h1 { font-size: 18px; }
+            .glass-header p { font-size: 11px; }
+        }
 
         .info-sidebar {
             position: absolute;
@@ -52,7 +119,7 @@
             bottom: 20px;
             width: 320px;
             z-index: 1001;
-            background: rgba(15, 15, 15, 0.8);
+            background: rgba(15, 15, 15, 0.85);
             backdrop-filter: blur(15px);
             -webkit-backdrop-filter: blur(15px);
             border-left: 1px solid rgba(255, 255, 255, 0.08);
@@ -63,8 +130,44 @@
             display: flex;
             flex-direction: column;
             box-shadow: -20px 0 50px rgba(0,0,0,0.5);
+            overflow-y: auto;
         }
         .info-sidebar.active { right: 0; }
+        
+        /* Mobile-specific sidebar: Half screen on mobile devices */
+        @media only screen and (max-width: 768px) {
+            .info-sidebar {
+                top: auto;
+                bottom: -60%;
+                right: 0;
+                left: 0;
+                width: auto;
+                height: 50vh;
+                border-radius: 20px 20px 0 0;
+                border-left: none;
+                border-top: 1px solid rgba(255, 255, 255, 0.08);
+                padding: 20px;
+                transition: bottom 0.4s cubic-bezier(0.22, 1, 0.36, 1);
+            }
+            .info-sidebar.active { 
+                bottom: 0;
+                right: 0;
+            }
+        }
+        
+        /* Support for 20:9 aspect ratio phones */
+        @media only screen and (max-width: 768px) and (min-aspect-ratio: 9/20) {
+            .info-sidebar {
+                height: 45vh;
+            }
+        }
+        
+        /* Support for 16:9 aspect ratio phones in landscape */
+        @media only screen and (max-width: 768px) and (orientation: landscape) {
+            .info-sidebar {
+                height: 60vh;
+            }
+        }
 
         .state-badge { display: inline-block; padding: 4px 12px; border-radius: 50px; font-size: 12px; font-weight: 600; margin-bottom: 10px; text-transform: uppercase; }
         .badge-nda { background: rgba(255, 153, 51, 0.15); color: #FF9933; border: 1px solid rgba(255, 153, 51, 0.4); }
@@ -75,26 +178,47 @@
         .data-label { font-size: 11px; text-transform: uppercase; letter-spacing: 1px; color: #666; margin-bottom: 8px; }
         .data-value { font-size: 16px; font-weight: 500; }
         .seat-count { font-family: 'Courier New', monospace; font-size: 18px; font-weight: 600; letter-spacing: -0.5px; }
-
-        /* --- 3. HOVER TOOLTIP STYLING (Hidden by default) --- */
-        .leaflet-tooltip.glass-tooltip {
-            background: rgba(0, 0, 0, 0.8);
-            backdrop-filter: blur(8px);
-            -webkit-backdrop-filter: blur(8px);
-            border: 1px solid rgba(255, 255, 255, 0.2);
-            border-radius: 6px;
-            color: #fff;
-            font-family: 'Inter', sans-serif;
-            font-weight: 600;
-            font-size: 11px;
-            letter-spacing: 0.5px;
-            text-transform: uppercase;
-            box-shadow: 0 4px 15px rgba(0,0,0,0.5);
+        
+        /* Mobile adjustments for sidebar content */
+        @media only screen and (max-width: 768px) {
+            .sidebar-title { font-size: 24px; margin: 0 0 15px 0; }
+            .data-section { margin-bottom: 15px; padding-bottom: 10px; }
+            .data-value { font-size: 14px; }
+            .seat-count { font-size: 16px; }
         }
 
-        /* Remove arrow */
+        /* --- 3. HOVER TOOLTIP STYLING --- */
+        /* Fixed: Remove the square box when typing state/location */
+        .leaflet-tooltip.glass-tooltip {
+            background: rgba(0, 0, 0, 0.85) !important;
+            backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.2) !important;
+            border-radius: 8px !important;
+            color: #fff !important;
+            font-family: 'Inter', sans-serif !important;
+            font-weight: 600 !important;
+            font-size: 11px !important;
+            letter-spacing: 0.5px !important;
+            text-transform: uppercase !important;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.6) !important;
+            padding: 6px 12px !important;
+            pointer-events: none !important;
+        }
+
+        /* Remove arrow and any default leaflet styles that cause square box */
         .leaflet-tooltip-top:before, .leaflet-tooltip-bottom:before,
-        .leaflet-tooltip-left:before, .leaflet-tooltip-right:before { display: none; }
+        .leaflet-tooltip-left:before, .leaflet-tooltip-right:before { 
+            display: none !important; 
+            border: none !important;
+        }
+        
+        /* Remove any default leaflet tooltip borders/backgrounds */
+        .leaflet-tooltip {
+            background: transparent !important;
+            border: none !important;
+            box-shadow: none !important;
+        }
 
     </style>
 </head>
@@ -103,6 +227,10 @@
     <div class="glass-header">
         <h1>India Governance Map</h1>
         <p>Political control & leadership (Nov 2025)</p>
+        <div class="api-controls">
+            <button id="refreshData" class="refresh-btn">🔄 Update Political Data</button>
+            <div id="apiStatus" class="api-status"></div>
+        </div>
     </div>
 
     <div id="sidebar" class="info-sidebar">
@@ -113,56 +241,193 @@
 
     <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
     <script>
-        // --- 1. SETUP MAP ---
+        // --- 1. SETUP MAP WITH MOBILE OPTIMIZATIONS ---
         var map = L.map('map', {
             zoomControl: false,
             attributionControl: false,
             center: [22.5, 82],
-            zoom: 5
+            zoom: 5,
+            // Mobile-specific optimizations
+            tap: true,
+            tapTolerance: 20,
+            zoomSnap: 0.5,
+            zoomDelta: 0.5,
+            wheelPxPerZoomLevel: 120,
+            // Better rendering on mobile
+            preferCanvas: false,
+            renderer: L.svg({ padding: 0.5 })
         });
 
+        // Adjust zoom based on device
+        if (window.innerWidth <= 768) {
+            map.setView([22.5, 82], 4.5);
+        }
+
+        // Dark tile layer with better contrast for mobile
         L.tileLayer('https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png', {
             subdomains: 'abcd',
-            maxZoom: 19
+            maxZoom: 19,
+            // Better performance on mobile
+            updateWhenIdle: false,
+            keepBuffer: 2
         }).addTo(map);
 
         // --- 2. DATA ---
-        const politicalData = {
-            "Maharashtra": { code: "N", cm: "Devendra Fadnavis", party: "BJP / Mahayuti", seats: "235 / 288" },
-            "Gujarat": { code: "N", cm: "Bhupendrabhai Patel", party: "BJP", seats: "156 / 182" },
-            "Goa": { code: "N", cm: "Pramod Sawant", party: "BJP", seats: "20 / 40" },
-            "Ladakh": { code: "N", cm: "Kavinder Gupta (LG)", party: "Central Govt", seats: "UT Admin" },
-            "Jammu and Kashmir": { code: "I", cm: "Omar Abdullah", party: "JKNC", seats: "42 / 90" },
-            "Himachal Pradesh": { code: "I", cm: "Sukhvinder Singh Sukhu", party: "INC", seats: "40 / 68" },
-            "Punjab": { code: "I", cm: "Bhagwant Mann", party: "AAP", seats: "92 / 117" },
-            "Haryana": { code: "N", cm: "Nayab Singh Saini", party: "BJP", seats: "48 / 90" },
-            "Uttarakhand": { code: "N", cm: "Pushkar Singh Dhami", party: "BJP", seats: "47 / 70" },
-            "Delhi": { code: "I", cm: "Atishi Marlena", party: "AAP", seats: "62 / 70" },
-            "Uttar Pradesh": { code: "N", cm: "Yogi Adityanath", party: "BJP", seats: "255 / 403" },
-            "Rajasthan": { code: "N", cm: "Bhajan Lal Sharma", party: "BJP", seats: "115 / 200" },
-            "Madhya Pradesh": { code: "N", cm: "Mohan Yadav", party: "BJP", seats: "163 / 230" },
-            "Chhattisgarh": { code: "N", cm: "Vishnu Deo Sai", party: "BJP", seats: "54 / 90" },
-            "Karnataka": { code: "I", cm: "Siddaramaiah", party: "INC", seats: "135 / 224" },
-            "Telangana": { code: "I", cm: "Revanth Reddy", party: "INC", seats: "64 / 119" },
-            "Andhra Pradesh": { code: "N", cm: "N. Chandrababu Naidu", party: "TDP", seats: "135 / 175" },
-            "Kerala": { code: "I", cm: "Pinarayi Vijayan", party: "CPI(M)", seats: "99 / 140" },
-            "Tamil Nadu": { code: "I", cm: "M. K. Stalin", party: "DMK", seats: "133 / 234" },
-            "Puducherry": { code: "N", cm: "N. Rangasamy", party: "AINRC", seats: "10 / 30" },
-            "Bihar": { code: "N", cm: "Nitish Kumar", party: "JD(U) + BJP", seats: "128 / 243" },
-            "Jharkhand": { code: "I", cm: "Hemant Soren", party: "JMM", seats: "47 / 81" },
-            "West Bengal": { code: "I", cm: "Mamata Banerjee", party: "TMC", seats: "213 / 294" },
-            "Odisha": { code: "N", cm: "Mohan Charan Majhi", party: "BJP", seats: "78 / 147" },
-            "Sikkim": { code: "N", cm: "Prem Singh Tamang", party: "SKM (NDA)", seats: "31 / 32" },
-            "Assam": { code: "N", cm: "Himanta Biswa Sarma", party: "BJP", seats: "60 / 126" },
-            "Arunachal Pradesh": { code: "N", cm: "Pema Khandu", party: "BJP", seats: "46 / 60" },
-            "Nagaland": { code: "N", cm: "Neiphiu Rio", party: "NDPP (NDA)", seats: "37 / 60" },
-            "Manipur": { code: "N", cm: "N. Biren Singh", party: "BJP", seats: "32 / 60" },
-            "Mizoram": { code: "O", cm: "Lalduhoma", party: "ZPM", seats: "27 / 40" },
-            "Tripura": { code: "N", cm: "Manik Saha", party: "BJP", seats: "32 / 60" },
-            "Meghalaya": { code: "N", cm: "Conrad Sangma", party: "NPP (NDA)", seats: "26 / 60" }
+        let politicalData = {
+            "Maharashtra": { code: "N", cm: "Devendra Fadnavis", party: "BJP / Mahayuti", seats: "235 / 288", coalition: "Multi-party (BJP, Shiv Sena, NCP)", opposition: "53 seats (MVA)" },
+            "Gujarat": { code: "N", cm: "Bhupendrabhai Patel", party: "BJP", seats: "156 / 182", coalition: "Single party", opposition: "26 seats (INC, AAP)" },
+            "Goa": { code: "N", cm: "Pramod Sawant", party: "BJP", seats: "20 / 40", coalition: "Coalition (BJP + Independents)", opposition: "20 seats (INC, AAP, TMC)" },
+            "Ladakh": { code: "N", cm: "Kavinder Gupta (LG)", party: "Central Govt", seats: "UT Admin", coalition: "Union Territory", opposition: "N/A" },
+            "Jammu and Kashmir": { code: "I", cm: "Omar Abdullah", party: "JKNC", seats: "42 / 90", coalition: "Coalition (JKNC + INC)", opposition: "48 seats (BJP, PDP, Others)" },
+            "Himachal Pradesh": { code: "I", cm: "Sukhvinder Singh Sukhu", party: "INC", seats: "40 / 68", coalition: "Single party", opposition: "28 seats (BJP)" },
+            "Punjab": { code: "I", cm: "Bhagwant Mann", party: "AAP", seats: "92 / 117", coalition: "Single party", opposition: "25 seats (INC, BJP, SAD)" },
+            "Haryana": { code: "N", cm: "Nayab Singh Saini", party: "BJP", seats: "48 / 90", coalition: "Single party", opposition: "42 seats (INC, JJP, INLD)" },
+            "Uttarakhand": { code: "N", cm: "Pushkar Singh Dhami", party: "BJP", seats: "47 / 70", coalition: "Single party", opposition: "23 seats (INC)" },
+            "Delhi": { code: "I", cm: "Atishi Marlena", party: "AAP", seats: "62 / 70", coalition: "Single party", opposition: "8 seats (BJP)" },
+            "Uttar Pradesh": { code: "N", cm: "Yogi Adityanath", party: "BJP", seats: "255 / 403", coalition: "Coalition (BJP + Allies)", opposition: "148 seats (SP, BSP, INC)" },
+            "Rajasthan": { code: "N", cm: "Bhajan Lal Sharma", party: "BJP", seats: "115 / 200", coalition: "Single party", opposition: "85 seats (INC)" },
+            "Madhya Pradesh": { code: "N", cm: "Mohan Yadav", party: "BJP", seats: "163 / 230", coalition: "Single party", opposition: "67 seats (INC)" },
+            "Chhattisgarh": { code: "N", cm: "Vishnu Deo Sai", party: "BJP", seats: "54 / 90", coalition: "Single party", opposition: "36 seats (INC)" },
+            "Karnataka": { code: "I", cm: "Siddaramaiah", party: "INC", seats: "135 / 224", coalition: "Single party", opposition: "89 seats (BJP, JD(S))" },
+            "Telangana": { code: "I", cm: "Revanth Reddy", party: "INC", seats: "64 / 119", coalition: "Single party", opposition: "55 seats (BRS, BJP)" },
+            "Andhra Pradesh": { code: "N", cm: "N. Chandrababu Naidu", party: "TDP", seats: "135 / 175", coalition: "Coalition (TDP + BJP + JSP)", opposition: "40 seats (YSRCP)" },
+            "Kerala": { code: "I", cm: "Pinarayi Vijayan", party: "CPI(M)", seats: "99 / 140", coalition: "Coalition (LDF)", opposition: "41 seats (UDF)" },
+            "Tamil Nadu": { code: "I", cm: "M. K. Stalin", party: "DMK", seats: "133 / 234", coalition: "Coalition (DMK + INC + Allies)", opposition: "101 seats (AIADMK, BJP)" },
+            "Puducherry": { code: "N", cm: "N. Rangasamy", party: "AINRC", seats: "10 / 30", coalition: "Coalition (AINRC + BJP)", opposition: "20 seats (INC, DMK)" },
+            "Bihar": { code: "N", cm: "Nitish Kumar", party: "JD(U) + BJP", seats: "128 / 243", coalition: "Coalition (JD(U) + BJP)", opposition: "115 seats (RJD, INC)" },
+            "Jharkhand": { code: "I", cm: "Hemant Soren", party: "JMM", seats: "47 / 81", coalition: "Coalition (JMM + INC + RJD)", opposition: "34 seats (BJP, AJSU)" },
+            "West Bengal": { code: "I", cm: "Mamata Banerjee", party: "TMC", seats: "213 / 294", coalition: "Single party", opposition: "81 seats (BJP, INC, CPM)" },
+            "Odisha": { code: "N", cm: "Mohan Charan Majhi", party: "BJP", seats: "78 / 147", coalition: "Single party", opposition: "69 seats (BJD, INC)" },
+            "Sikkim": { code: "N", cm: "Prem Singh Tamang", party: "SKM (NDA)", seats: "31 / 32", coalition: "Single party (NDA ally)", opposition: "1 seat (SDF)" },
+            "Assam": { code: "N", cm: "Himanta Biswa Sarma", party: "BJP", seats: "60 / 126", coalition: "Coalition (BJP + AGP + UPPL)", opposition: "66 seats (INC, AIUDF)" },
+            "Arunachal Pradesh": { code: "N", cm: "Pema Khandu", party: "BJP", seats: "46 / 60", coalition: "Single party", opposition: "14 seats (NPP, INC, Others)" },
+            "Nagaland": { code: "N", cm: "Neiphiu Rio", party: "NDPP (NDA)", seats: "37 / 60", coalition: "Coalition (NDPP + BJP)", opposition: "23 seats (NPF, Others)" },
+            "Manipur": { code: "N", cm: "N. Biren Singh", party: "BJP", seats: "32 / 60", coalition: "Coalition (BJP + NPP + NPF)", opposition: "28 seats (INC, JD(U))" },
+            "Mizoram": { code: "O", cm: "Lalduhoma", party: "ZPM", seats: "27 / 40", coalition: "Single party", opposition: "13 seats (MNF, INC, BJP)" },
+            "Tripura": { code: "N", cm: "Manik Saha", party: "BJP", seats: "32 / 60", coalition: "Coalition (BJP + IPFT)", opposition: "28 seats (CPIM, INC, TIPRA)" },
+            "Meghalaya": { code: "N", cm: "Conrad Sangma", party: "NPP (NDA)", seats: "26 / 60", coalition: "Coalition (NPP + BJP + UDP + Others)", opposition: "34 seats (INC, TMC)" }
         };
 
-        // --- 3. STYLING ---
+        // --- 3. GEMINI API INTEGRATION ---
+        // Note: For production, store API key securely (environment variables, backend proxy)
+        // Users should add their own Gemini API key
+        const GEMINI_API_KEY = 'YOUR_GEMINI_API_KEY_HERE'; // Replace with actual key
+        const GEMINI_API_URL = 'https://generativelanguage.googleapis.com/v1beta/models/gemini-pro:generateContent';
+        
+        async function fetchLatestPoliticalData() {
+            if (GEMINI_API_KEY === 'YOUR_GEMINI_API_KEY_HERE') {
+                updateStatus('⚠️ Please configure Gemini API key');
+                alert('To use AI data updates, please:\n1. Get a Gemini API key from https://makersuite.google.com/app/apikey\n2. Replace YOUR_GEMINI_API_KEY_HERE in the code\n3. Click refresh again');
+                return;
+            }
+            
+            updateStatus('🔄 Fetching latest data...');
+            document.getElementById('refreshData').disabled = true;
+            
+            const prompt = `You are a comprehensive Indian political data analyst. Provide the most current and accurate political data for ALL Indian states and union territories as of November 2025 or the latest available data (MUST be from November 2025 or later, not earlier).
+
+For EACH state/UT, provide in JSON format:
+{
+  "stateName": {
+    "code": "N" for NDA, "I" for INDIA bloc, "O" for Others/Regional,
+    "cm": "Current Chief Minister full name",
+    "party": "Full party name or coalition name",
+    "seats": "Current ruling seats / Total seats",
+    "coalition": "Single party" or "Coalition (Party1 + Party2)" or "Multi-party (details)",
+    "opposition": "Total opposition seats and main parties"
+  }
+}
+
+CRITICAL REQUIREMENTS:
+1. Data MUST be from November 2025 or later
+2. Cross-verify data from multiple reliable sources (Election Commission of India, official state government websites, major news agencies)
+3. Include ALL 28 states and 8 union territories
+4. For coalition governments, specify ALL coalition partners
+5. Provide exact seat numbers (ruling party seats / total assembly seats)
+6. Include opposition seat count and main opposition parties
+7. Ensure accuracy of Chief Minister names and current party affiliations
+8. Double-check recent election results and government formations
+9. Verify any recent defections, alliance changes, or government changes
+10. If any state had elections in 2024-2025, ensure data reflects the current government
+
+States to cover: Maharashtra, Gujarat, Goa, Karnataka, Kerala, Tamil Nadu, Andhra Pradesh, Telangana, Odisha, West Bengal, Bihar, Jharkhand, Uttar Pradesh, Madhya Pradesh, Rajasthan, Chhattisgarh, Punjab, Haryana, Himachal Pradesh, Uttarakhand, Assam, Sikkim, Arunachal Pradesh, Nagaland, Manipur, Meghalaya, Tripura, Mizoram
+
+Union Territories: Delhi, Jammu & Kashmir, Puducherry, Ladakh, Chandigarh, Dadra & Nagar Haveli and Daman & Diu, Lakshadweep, Andaman & Nicobar Islands
+
+Provide ONLY valid JSON in your response, no additional text or explanations.`;
+
+            try {
+                const response = await fetch(`${GEMINI_API_URL}?key=${GEMINI_API_KEY}`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({
+                        contents: [{
+                            parts: [{
+                                text: prompt
+                            }]
+                        }],
+                        generationConfig: {
+                            temperature: 0.1,
+                            topK: 1,
+                            topP: 0.95,
+                            maxOutputTokens: 8192,
+                        }
+                    })
+                });
+
+                if (!response.ok) {
+                    throw new Error(`API error: ${response.status}`);
+                }
+
+                const data = await response.json();
+                const apiResponse = data.candidates[0].content.parts[0].text;
+                
+                // Extract JSON from response (handle markdown code blocks)
+                let jsonText = apiResponse;
+                if (apiResponse.includes('```json')) {
+                    jsonText = apiResponse.split('```json')[1].split('```')[0].trim();
+                } else if (apiResponse.includes('```')) {
+                    jsonText = apiResponse.split('```')[1].split('```')[0].trim();
+                }
+                
+                const newPoliticalData = JSON.parse(jsonText);
+                
+                // Validate and merge data
+                if (Object.keys(newPoliticalData).length > 0) {
+                    // Merge with existing data (keep structure)
+                    politicalData = { ...politicalData, ...newPoliticalData };
+                    
+                    // Refresh the map
+                    if (window.geojson) {
+                        map.removeLayer(window.geojson);
+                        loadGeoJSON();
+                    }
+                    
+                    updateStatus('✅ Data updated successfully!');
+                    setTimeout(() => updateStatus(''), 3000);
+                } else {
+                    throw new Error('No valid data received');
+                }
+                
+            } catch (error) {
+                console.error('Error fetching data:', error);
+                updateStatus('❌ Error updating data');
+                alert('Failed to fetch data. Please check:\n1. API key is valid\n2. Internet connection\n3. API quota\n\nError: ' + error.message);
+            } finally {
+                document.getElementById('refreshData').disabled = false;
+            }
+        }
+        
+        function updateStatus(message) {
+            document.getElementById('apiStatus').textContent = message;
+        }
+        
+        // Add event listener for refresh button
+        document.getElementById('refreshData').addEventListener('click', fetchLatestPoliticalData);
+
+        // --- 4. STYLING ---
         function getColor(stateName) {
             if(stateName === "Orissa") stateName = "Odisha";
             if(stateName === "Uttaranchal") stateName = "Uttarakhand";
@@ -182,16 +447,20 @@
             if(name === "Jammu & Kashmir") name = "Jammu and Kashmir";
             if(name === "Arunachal Pradesh") name = "Arunachal Pradesh";
 
+            const color = getColor(name);
+            
             return {
-                fillColor: getColor(name),
-                weight: 1,
-                opacity: 1,
-                color: getColor(name),
-                fillOpacity: 0.15
+                fillColor: color,
+                weight: 1.5,
+                opacity: 0.8,
+                color: color,
+                fillOpacity: 0.2,
+                // Mobile optimizations
+                className: 'state-polygon'
             };
         }
 
-        // --- 4. INTERACTION ---
+        // --- 5. INTERACTION ---
         function highlightFeature(e) {
             var layer = e.target;
             layer.setStyle({ weight: 3, color: '#fff', fillOpacity: 0.5 });
@@ -257,6 +526,8 @@
                 <div class="data-section"><div class="data-label">Chief Minister</div><div class="data-value">${data.cm}</div></div>
                 <div class="data-section"><div class="data-label">Ruling Party</div><div class="data-value">${data.party}</div></div>
                 <div class="data-section"><div class="data-label">Assembly Strength</div><div class="seat-count">${data.seats}</div></div>
+                ${data.coalition ? `<div class="data-section"><div class="data-label">Coalition Type</div><div class="data-value">${data.coalition}</div></div>` : ''}
+                ${data.opposition ? `<div class="data-section"><div class="data-label">Opposition</div><div class="data-value">${data.opposition}</div></div>` : ''}
             `;
             document.getElementById('sidebar-content').innerHTML = html;
         }
@@ -264,18 +535,30 @@
         map.on('click', function(e) {
              if (e.originalEvent.target.id === 'map') {
                  document.getElementById('sidebar').classList.remove('active');
-                 map.flyTo([22.5, 82], 5);
+                 // Adjust zoom based on device
+                 const zoomLevel = window.innerWidth <= 768 ? 4.5 : 5;
+                 map.flyTo([22.5, 82], zoomLevel);
              }
         });
 
-        fetch('https://raw.githubusercontent.com/geohacker/india/master/state/india_telengana.geojson')
-            .then(res => res.json())
-            .then(data => {
-                geojson = L.geoJson(data, {
-                    style: style,
-                    onEachFeature: onEachFeature
-                }).addTo(map);
-            });
+        // Load GeoJSON data
+        function loadGeoJSON() {
+            fetch('https://raw.githubusercontent.com/geohacker/india/master/state/india_telengana.geojson')
+                .then(res => res.json())
+                .then(data => {
+                    window.geojson = L.geoJson(data, {
+                        style: style,
+                        onEachFeature: onEachFeature
+                    }).addTo(map);
+                })
+                .catch(error => {
+                    console.error('Error loading GeoJSON:', error);
+                    updateStatus('❌ Error loading map data');
+                });
+        }
+        
+        // Initial load
+        loadGeoJSON();
 
     </script>
 </body>
